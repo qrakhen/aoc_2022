@@ -4,11 +4,11 @@ const W = 7;
 const map = [ 0x0, 0x0 ];
 
 const shapes = [
-    [4, 0b1111],
-    [3, 0b0100, 0b1110, 0b0100],
-    [3, 0b0010, 0b0010, 0b1110],
-    [1, 0b1000, 0b1000, 0b1000, 0b1000],
-    [2, 0b1100, 0b1100]
+    [4, 0b1111000],
+    [3, 0b0100000, 0b1110000, 0b0100000],
+    [3, 0b0010000, 0b0010000, 0b1110000],
+    [1, 0b1000000, 0b1000000, 0b1000000, 0b1000000],
+    [2, 0b1100000, 0b1100000]
 ];
 
 var ji = 0;
@@ -18,30 +18,36 @@ const nextJ = () => { return input.charAt(ji++ % input.length); };
 const nextR = () => { return shapes[ri++ % shapes.length]; };
 
 const Box = function(shape, x, y) {
-    this.x = x;
-    this.y = y;
     this.w = shape[0];
+    this.h = shape.length - 1;
+    this.x = x;
+    this.y = y - this.h;
     this.shape = Array.from(shape).slice(1);
 
     this.move = (x, y) => {
-        if (this.x + x < 0) return;
-        if (this.x + x >= W - this.w) return;
-
+        if (x != 0) {
+            if (this.x + x < 0) return false;
+            if (this.x + x >= W - this.w) return false;
+            if (this.collides(this.x + x, this.y)) return false;
+            this.x += x;
+        } else {
+            if (this.collides(this.x, this.y + y)) {
+                return false;
+            } else {
+                this.y += y;
+            }
+        }
+        return true;
     };
 
-    this.translate = () => {
-        var r = [];
-        shape.forEach(_ => {
-            r.push(_ >> this.x);
-        });
-    };
-
-    this.collides = (map) => {
-
-    };
-
-    this.draw = () => {
-
+    this.collides = (x, y) => {
+        if (x < 0) return true;
+        if (x > W - this.w) return true;
+        if (y < 0) return true;
+        for (var yy = this.shape.length - 1; yy >= 0; yy--) {
+            if ((this.shape[yy] >> x) & (map[y - yy]) > 0)
+                return true;
+        }
     };
 }
 
@@ -49,14 +55,48 @@ function draw() {
     var r = '';
     map.forEach(y => { 
         var _ = '';
-        for (var i = 6; i >= 0; i--) {
+        for (var i = 7; i >= 0; i--) {
             _ += (y & (1 << i)) ? '#' : '.';
         }
-        r += "\n" + _; 
+        r = _ + "\n" + r; 
     });
     return r;
 }
 
-function step() {
+function fillMap(h) {
+    h += 3;
+    var i = 0;
+    for (var y = map.length - 1; y >= 0; y--) {
+        if (map[y] > 0) {
+            i = y;
+            break;
+        }
+    }
+    var d = h - (map.length - i);
+    for (var i = 0; i < d; i++) {
+        map.push(0x0);
+    }
+}
 
+function step() {
+    var active = new Box(nextR(), 2, map.length);
+    debugger;
+    fillMap(active.h);
+    while (active) {
+        console.clear();
+        console.log(draw());
+        console.log(active);
+        var d = nextJ();
+        active.move(d == '>' ? 1 : -1, 0);
+        if (!active.move(0, -1)) {            
+            for (var yy = active.shape.length - 1; yy >= 0; yy--) {
+                map[active.y + yy] |= (active.shape[yy] >> active.x);
+            }
+            active = null;
+        }
+    }
+}
+
+for (var i = 0; i < 2022; i++) {
+    step();
 }

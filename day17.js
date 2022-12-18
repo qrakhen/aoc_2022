@@ -80,7 +80,6 @@ function fillMap(h) {
 
 function step() {
     var active = new Box(nextR(), 2, map.length);
-    debugger;
     fillMap(active.h);
     while (active) {
         console.clear();
@@ -97,6 +96,9 @@ function step() {
     }
 }
 
-for (var i = 0; i < 2022; i++) {
+debugger;
+for (var i = 0; i < 1000000000000; i++) {
     step();
 }
+
+//1570930232582

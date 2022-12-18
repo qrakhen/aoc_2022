@@ -1,4 +1,8 @@
-﻿using System;
+/**
+ Disclaimer: I had very little idea what i was doing for the second part of this task, but it worked. 
+ I am sure that was sheer luck. */
+
+using System;
 using System.Linq;
 
 namespace ConsoleApp9

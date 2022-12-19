@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace ConsoleApp10
+namespace ConsoleApp10s
 {
     class Program
     {
@@ -65,7 +65,6 @@ namespace ConsoleApp10
 
             public bool need(Resource resource)
             {
-                return true;
                 // some simple strategy
                 return robots.Count(_ => (_.resource == resource)) < set.maxBots[resource];
             }
@@ -91,7 +90,7 @@ namespace ConsoleApp10
         }
 
         // i'm gonna bruteforce this ****
-        static int runSet(BlueprintSet set)
+        static int runSet(BlueprintSet set, int times = 24)
         {
             var run = new Run(set);
             run.robots.Add(new Robot(Resource.ore));
@@ -100,7 +99,7 @@ namespace ConsoleApp10
             foreach (var s in set.maxBots) {
                 Console.WriteLine(s.Key + ": " + s.Value);
             }
-            for (int i = 0; i < 24; i++) {
+            for (int i = 0; i < times; i++) {
                 Console.WriteLine("minute " + (i+1));
                 // could do this so much better i'm literally sick
                 // strategy: always buy geode, but reverse order after that for base materials
@@ -194,7 +193,7 @@ namespace ConsoleApp10
             int qSum = 0;
             for (int i = 0; i < sets.Count; i++) {
                 Console.WriteLine("set " + (i + 1) + ": ");
-                var g = runSet(sets[i]);
+                var g = runSet(sets[i], 32);
                 var q = g * (i + 1);
                 qSum += q;
                 results.Add(i, g);                

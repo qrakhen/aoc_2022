@@ -90,6 +90,8 @@ function step() {
         if (!active.move(0, -1)) {            
             for (var yy = active.shape.length - 1; yy >= 0; yy--) {
                 map[active.y + yy] |= (active.shape[yy] >> active.x);
+
+                grid[y ^ (1 >> x)] |= n & z > 0 ? n >> x : 0; 
             }
             active = null;
         }
